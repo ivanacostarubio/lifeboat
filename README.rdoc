@@ -1,5 +1,7 @@
 = lifeboat
 
+link:support/lifeboat.png
+
 Description goes here.
 
 == Contributing to lifeboat
