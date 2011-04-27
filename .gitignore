@@ -45,3 +45,4 @@ pkg
 *.swp
 *.swo
 spec/debug.log
+support/aws.yml
