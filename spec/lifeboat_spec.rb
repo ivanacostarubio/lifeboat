@@ -38,7 +38,7 @@ def self.clean_all_queues
    @sqs.queues.each do |queue|
      @sqs.queue(queue.name.to_s).clear
    end
-    sleep(5)
+    sleep(3)
 end
 end
 
@@ -69,7 +69,22 @@ describe FakeModel, " We hook into callbacks to send the messages" do
   end
 end
 
-describe LifeBoat do
+describe LifeBoat , " AWS Credentials"do
+  before(:each) do
+    Helper.clean_all_queues
+  end
+
+  it "Raises when no credentials are given" do
+    lambda { LifeBoat.credentials('','')}.should raise_error(RightAws::AwsError)
+  end
+
+  it "Read the credentials from config/aws.yml" do
+    pending
+  end
+end
+
+describe LifeBoat  do
+
   before(:each) do
     Helper.clean_all_queues
   end
@@ -78,16 +93,6 @@ describe LifeBoat do
     Fake.create(:name => "ivan")
     messages = LifeBoat.read_queue("create_fake")
     messages.size.should == 1
-  end
-  it "Raises when no credentials are given" do
-    lambda { LifeBoat.credentials('','')}.should raise_error(RightAws::AwsError)
-  end
-end
-
-describe LifeBoat  do
-
-  before(:each) do
-    Helper.clean_all_queues
   end
 
   it "the message it creates contains the attributes ob the object as json" do
@@ -105,7 +110,7 @@ describe LifeBoat  do
 
   it "updates SQS queue when parent is updated" do
     f = Fake.create(:name => "Er Update")
-    f.names= "28347834" ; f.save
+    f.name= "28347834" ; f.save
     messages= LifeBoat.read_queue("update_fake")
     messages.size.should == 1
   end
