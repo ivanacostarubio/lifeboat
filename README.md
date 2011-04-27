@@ -46,6 +46,18 @@ Quick Start
      include LifeBoat
     end
 
+
+** We will then automatically create queue messages each time any instance of the model class is created, updated, or deleted. ** 
+
+How did we named the queues
+---------------------------
+
+** ction_model **
+
+** Where: **  action can be: create, update and delete
+** Where: ** model can be the name of any model we include lifeboat on. 
+
+
 ASSUMPTIONS
 -----------
 
@@ -55,12 +67,6 @@ We Asume you have a file called aws.yml under you config directory with the aws 
       :key 'you_key'
       :secret 'your_secret'
 
-Usage
------
-
-The basics of Lifeboat are quite simple: Include the LifeBoat module. Lifeboat will hook into 
-ActiveRecord observers and will then automatically create queue messages each time any instance
-of the model class is created, updated, or deleted.
 
 Hot-Swap Slaves
 ---------------
