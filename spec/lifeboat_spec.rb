@@ -38,6 +38,7 @@ def self.clean_all_queues
    @sqs.queues.each do |queue|
      @sqs.queue(queue.name.to_s).clear
    end
+    sleep(5)
 end
 end
 
@@ -68,20 +69,7 @@ describe FakeModel, " We hook into callbacks to send the messages" do
   end
 end
 
-describe LifeBoat, " Create" do
-  before(:each) do
-    Helper.clean_all_queues
-  end
-
-  it "the message it creates contains the attributes ob the object as json" do
-    f = Fake.create(:name => "ivan")
-    q = LifeBoat.read_queue("create_fake")
-    q[0].body.should == f.attributes.to_json
-  end
-end
-
-describe LifeBoat  do
-
+describe LifeBoat do
   before(:each) do
     Helper.clean_all_queues
   end
@@ -91,17 +79,35 @@ describe LifeBoat  do
     messages = LifeBoat.read_queue("create_fake")
     messages.size.should == 1
   end
-
   it "Raises when no credentials are given" do
     lambda { LifeBoat.credentials('','')}.should raise_error(RightAws::AwsError)
   end
+end
 
-  it "updates SQS message object when parent is updated" do
-    pending
+describe LifeBoat  do
+
+  before(:each) do
+    Helper.clean_all_queues
   end
 
-  it "deletes SQS message object when parent is deleted" do
-    pending
+  it "the message it creates contains the attributes ob the object as json" do
+    f = Fake.create(:name => "ivan")
+    q = LifeBoat.read_queue("create_fake")
+    q[0].body.should == f.attributes.to_json
+  end
+
+  it "deletes SQS queue when parent is deleted" do
+    f = Fake.create(:name => "updated")
+    f.destroy
+    messages = LifeBoat.read_queue("destroy_fake")
+    messages.size.should == 1
+  end
+
+  it "updates SQS queue when parent is updated" do
+    f = Fake.create(:name => "Er Update")
+    f.names= "28347834" ; f.save
+    messages= LifeBoat.read_queue("update_fake")
+    messages.size.should == 1
   end
 
 end
