@@ -29,14 +29,23 @@ module LifeBoat
       after_create :create_lifeboat
       before_destroy :destroy_lifeboat
       after_update :update_lifeboat
-      @base = base
     end
+  end
+
+  def self.credentials(key, secret)
+    @cue = RightAws::SqsGen2.new(key,secret)
   end
 
   def self.read_queue(name)
     @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
     return @cue.queue(name).receive_messages
   end
+
+  # THE FOLLOWING 3 METHODS LOOK A LOT A LIKE
+  # A JUICY STEAK AWATING TO BE EATEN
+  # DUPLICATION SOON TO BE REMOVED
+  #
+  #  MACHETE!
 
   def create_lifeboat
     @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
@@ -56,9 +65,6 @@ module LifeBoat
     q.send_message(self.attributes.to_json)
   end
 
-  def self.credentials(key, secret)
-    @cue = RightAws::SqsGen2.new(key,secret)
-  end
 end
 
 
