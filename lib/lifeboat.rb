@@ -27,6 +27,8 @@ module LifeBoat
     raise "Object Lacks Proper Callbacks" unless base.respond_to? :after_create
     base.class_eval do
       after_create :create_lifeboat
+      before_destroy :destroy_lifeboat
+      after_update :update_lifeboat
       @base = base
     end
   end
@@ -39,6 +41,18 @@ module LifeBoat
   def create_lifeboat
     @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
     q = RightAws::SqsGen2::Queue.create(@cue, "create_" + self.class.to_s.downcase, true)
+    q.send_message(self.attributes.to_json)
+  end
+
+  def update_lifeboat
+    @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
+    q = RightAws::SqsGen2::Queue.create(@cue, "update_" + self.class.to_s.downcase, true)
+    q.send_message(self.attributes.to_json)
+  end
+
+  def destroy_lifeboat
+    @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
+    q = RightAws::SqsGen2::Queue.create(@cue, "destroy_" + self.class.to_s.downcase, true)
     q.send_message(self.attributes.to_json)
   end
 
