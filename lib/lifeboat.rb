@@ -1,4 +1,6 @@
+require 'rubygems'
 require 'right_aws'
+require 'active_record'
 require 'yaml'
 
 class Credentials
@@ -14,7 +16,6 @@ class Credentials
     @credentials['test']['key']
   end
   def self.secret
-
     @credentials = YAML::load(IO.read(File.dirname(__FILE__) + '/../support/aws.yml'))
     @credentials['test']['secret']
   end
@@ -30,11 +31,15 @@ module LifeBoat
     end
   end
 
+  def self.read_queue(name)
+    @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
+    return @cue.queue(name).receive_messages
+  end
+
   def create_lifeboat
     @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
-    q = RightAws::SqsGen2::Queue.create(@cue, "create_" + self.class.to_s, true)
+    q = RightAws::SqsGen2::Queue.create(@cue, "create_" + self.class.to_s.downcase, true)
     q.send_message(self.attributes.to_json)
-    self
   end
 
   def self.credentials(key, secret)
