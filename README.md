@@ -3,6 +3,16 @@ lifeboat
 
 ![LifeBoat](https://github.com/ivanacostarubio/lifeboat/raw/master/support/lifeboat.png)
 
+ SAMPLE USAGE 
+-------------
+
+TODO: READ S3 Configuration file 
+
+class AnyObject < ActiveRecord::Base
+ include LifeBoat
+end
+
+
 Contributing to lifeboat
 ------------------------
 
