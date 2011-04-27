@@ -1,6 +1,20 @@
 Lifeboat
 ========
 
+![LifeBoat](https://github.com/ivanacostarubio/lifeboat/raw/master/support/lifeboat.png)
+
+Lifeboat is a drop in module for any Ruby Object that responds to 3 callbacks. 
+
+It monitors your models for create, update and delete events. 
+
+It sends a serialized copy of the model attributes to Amazon SQS when those events happen.  
+
+The serialized records are JSON.
+
+
+WHY
+---
+
 If you're operating a web service and you're smart, then you make frequent
 backups.  But if you're operating a popular web service then no backup will
 ever be fresh enough when you have a failure.  A lot of people learned that
@@ -11,58 +25,35 @@ But not everybody has that option.  Another way to do it is to send your data
 to the lifeboats as soon as it's created, so that you can recover it after
 a disaster.
 
-![LifeBoat](https://github.com/ivanacostarubio/lifeboat/raw/master/support/lifeboat.png)
 
-
-Contributing to lifeboat
-------------------------
-=======
-Lifeboat is intended as an easy file attachment library for ActiveRecord. It
-monitors your ActiveRecord models for create, update and delete events, and it
-creates serialized copies of your records on the data feed of your choosing.
-Either email notifications or Amazon SQS.  The serialized records can be formatted
-in JSON or XML.  There are three different message queues for each model class,
-including one for delete messages.  Lifeboat also includes a component for
-monitoring message queues and updating the local database to reflect the
-data updates.  This enables a sort of application-layer data replication.
 
 Requirements
 ------------
-
-Amazon SQS
-right_aws gem
+* Amazon SQS
+* right_aws gem
 
 Installation
 ------------
 
 Include the gem in your Gemfile:
 
-  gem "lifeboat"
+    gem "lifeboat"
 
 Quick Start
 -----------
 
-class AnyObject < ActiveRecord::Base
- include LifeBoat
-end
+    class AnyObject < ActiveRecord::Base
+     include LifeBoat
+    end
 
 ASSUMPTIONS
 -----------
 
 We Asume you have a file called aws.yml under you config directory with the aws key and secret
 
-test:
-  :key 'you_key'
-  :secret 'your_secret'
-
-development:
-  :key 'you_key'
-  :secret 'your_secret'
-
-production:
-  :key 'you_key'
-  :secret 'your_secret'
-
+    test:
+      :key 'you_key'
+      :secret 'your_secret'
 
 Usage
 -----
