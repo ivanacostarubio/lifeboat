@@ -15,8 +15,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "lifeboat"
   gem.homepage = "http://github.com/ivanacostarubio/lifeboat"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{sends messages to SQS}
+  gem.description = %Q{ }
   gem.email = "ivan@bakedweb.net"
   gem.authors = ["Ivan Acosta-Rubio"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
