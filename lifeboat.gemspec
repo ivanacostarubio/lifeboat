@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ivan Acosta-Rubio"]
   s.date = %q{2011-04-27}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{ }
   s.email = %q{ivan@bakedweb.net}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
     "config/aws.yml",
     "config/database.yml",
     "lib/lifeboat.rb",
+    "lifeboat.gemspec",
     "spec/lifeboat_spec.rb",
     "support/lifeboat.png"
   ]
@@ -34,7 +35,7 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.4.2}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{sends messages to SQS}
   s.test_files = [
     "spec/lifeboat_spec.rb"
   ]
