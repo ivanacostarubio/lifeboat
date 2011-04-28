@@ -2,7 +2,8 @@ require 'rubygems'
 require 'rspec'
 require 'lifeboat'
 
-config = YAML::load(IO.read(File.dirname(__FILE__) + '/../support/database.yml'))
+config = YAML::load(IO.read(File.dirname(__FILE__) + '/../config/database.yml'))
+
 ActiveRecord::Base.logger =
         ActiveSupport::BufferedLogger.new(File.dirname(__FILE__) + "/debug.log")
 
@@ -33,14 +34,20 @@ end
 
 
 class Helper
-def self.clean_all_queues
-   @sqs = RightAws::SqsGen2.new(Credentials.key,Credentials.secret)
-   @sqs.queues.each do |queue|
-     @sqs.queue(queue.name.to_s).clear
-   end
-    sleep(3)
+    def self.clean_all_queues
+       @sqs = RightAws::SqsGen2.new(Credentials.key,Credentials.secret)
+       @sqs.queues.each do |queue|
+         @sqs.queue(queue.name.to_s).clear
+       end
+    end
 end
+
+class Rails
+  def self.root
+    @credentials = YAML::load(IO.read(File.dirname(__FILE__) + '/../config/aws.yml'))
+  end
 end
+
 
 describe "An simple object " do
   it "raises for not having callbacks" do
@@ -74,10 +81,6 @@ describe LifeBoat , " AWS Credentials"do
     Helper.clean_all_queues
   end
 
-  it "Raises when no credentials are given" do
-    lambda { LifeBoat.credentials('','')}.should raise_error(RightAws::AwsError)
-  end
-
   it "Read the credentials from config/aws.yml" do
     pending
   end
@@ -85,7 +88,7 @@ end
 
 describe LifeBoat  do
 
-  before(:each) do
+  after(:each) do
     Helper.clean_all_queues
   end
 
