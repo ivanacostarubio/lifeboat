@@ -44,10 +44,9 @@ end
 
 class Rails
   def self.root
-    @credentials = YAML::load(IO.read(File.dirname(__FILE__) + '/../config/aws.yml'))
+    ''
   end
 end
-
 
 describe "An simple object " do
   it "raises for not having callbacks" do
