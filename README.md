@@ -42,9 +42,16 @@ Include the gem in your Gemfile:
 Quick Start
 -----------
 
+Include Lifeboat in your model class:
+
     class AnyObject < ActiveRecord::Base
      include LifeBoat
     end
+
+Provide your AWS credentials in config/aws.yml
+
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
 
 
 ** We will then automatically create queue messages each time any instance of the model class is created, updated, or deleted. ** 
@@ -52,7 +59,7 @@ Quick Start
 How did we named the queues
 ---------------------------
 
-** ction_model **
+** action_model **
 
 ** Where: **  action can be: create, update and delete
 ** Where: ** model can be the name of any model we include lifeboat on. 
