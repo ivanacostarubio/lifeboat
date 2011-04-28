@@ -3,6 +3,7 @@ require 'right_aws'
 require 'active_record'
 require 'yaml'
 
+
 class Credentials
   def initialize
 # TRIED USING THE INITIALIZE FOR THOSE YAML LOADING DOWN THERE
@@ -12,12 +13,10 @@ class Credentials
   end
 
   def self.key
-    @credentials = YAML::load(IO.read(File.dirname(__FILE__) + '/../support/aws.yml'))
-    @credentials['test']['key']
+    Rails.root['test']['key']
   end
   def self.secret
-    @credentials = YAML::load(IO.read(File.dirname(__FILE__) + '/../support/aws.yml'))
-    @credentials['test']['secret']
+    Rails.root['test']['secret']
   end
 end
 
@@ -27,45 +26,26 @@ module LifeBoat
     raise "Object Lacks Proper Callbacks" unless base.respond_to? :after_create
     base.class_eval do
       after_create :create_lifeboat
-      before_destroy :destroy_lifeboat
+      after_destroy :destroy_lifeboat
       after_update :update_lifeboat
     end
   end
 
-  def self.credentials(key, secret)
-    @cue = RightAws::SqsGen2.new(key,secret)
-  end
-
   def self.read_queue(name)
+    #TODO EXTRAT OUT THE @CUE INTO HIGHER LEVEL
     @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
     return @cue.queue(name).receive_messages
   end
 
-  # THE FOLLOWING 3 METHODS LOOK A LOT A LIKE
-  # A JUICY STEAK AWATING TO BE EATEN
-  # DUPLICATION SOON TO BE REMOVED
-  #
-  #  MACHETE!
-
-  def create_lifeboat
+  def after_initialize
     @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
-    q = RightAws::SqsGen2::Queue.create(@cue, "create_" + self.class.to_s.downcase, true)
-    q.send_message(self.attributes.to_json)
   end
 
-  def update_lifeboat
-    @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
-    q = RightAws::SqsGen2::Queue.create(@cue, "update_" + self.class.to_s.downcase, true)
-    q.send_message(self.attributes.to_json)
-  end
-
-  def destroy_lifeboat
-    @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
-    q = RightAws::SqsGen2::Queue.create(@cue, "destroy_" + self.class.to_s.downcase, true)
-    q.send_message(self.attributes.to_json)
+  [:create, :update, :destroy ].each do |action|
+    define_method(action.to_s + "_lifeboat") do
+      q = RightAws::SqsGen2::Queue.create(@cue, action.to_s+"_"+ self.class.to_s.downcase, true)
+      q.send_message(self.attributes.to_json)
+    end
   end
 
 end
-
-
-
