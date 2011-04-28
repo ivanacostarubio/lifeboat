@@ -113,4 +113,4 @@ Buit by Ivan.
 
 Designed by Ivan & Ryan.
 
-Inspired by Amazon.  (And not in a good way.)
+Inspired by Amazon.  ([And not in a good way.](http://www.businessinsider.com/amazon-lost-data-2011-4))
