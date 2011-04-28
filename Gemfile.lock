@@ -33,6 +33,6 @@ DEPENDENCIES
   bundler (~> 1.0.0)
   jeweler (~> 1.5.2)
   rcov
-  right_aws (= 1.10.0)
+  right_aws (>= 1.10.0)
   rspec (= 2.5.0)
   shoulda

@@ -46,3 +46,4 @@ pkg
 *.swo
 spec/debug.log
 support/aws.yml
+*.swn
