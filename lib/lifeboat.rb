@@ -5,9 +5,12 @@ require 'yaml'
 
 class AWS
   def self.root
-    if Rails.root
+    if Rails.version == "2.1.2"
       YAML::load(IO.read(Rails.root + "/config/aws.yml"))
+    elsif Rails.version == "2.3.8"
+      YAML::load(IO.read(Rails.root + "config/aws.yml"))
     else
+      raise "Email ivan@bakedweb.net with this error"
       YAML::load(IO.read(File.dirname(__FILE__) + '/../config/aws.yml'))
     end
   end
