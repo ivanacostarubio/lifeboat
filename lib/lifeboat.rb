@@ -6,7 +6,7 @@ require 'yaml'
 class AWS
   def self.root
     if Rails.root
-      YAML::load(IO.read(Rails.root + "config/aws.yml"))
+      YAML::load(IO.read(Rails.root + "/config/aws.yml"))
     else
       YAML::load(IO.read(File.dirname(__FILE__) + '/../config/aws.yml'))
     end
