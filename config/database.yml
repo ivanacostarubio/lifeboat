@@ -1,0 +1,4 @@
+test:
+  adapter: mysql
+  username: root
+  database: lifeboat_test
