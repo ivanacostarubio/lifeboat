@@ -3,6 +3,17 @@ require 'right_aws'
 require 'active_record'
 require 'yaml'
 
+class AWS
+  def self.root
+    if Rails.root
+      YAML::load(IO.read(Rails.root + "config/aws.yml"))
+    else
+      YAML::load(IO.read(File.dirname(__FILE__) + '/../config/aws.yml'))
+    end
+  end
+end
+
+
 
 class Credentials
   def initialize
@@ -13,10 +24,10 @@ class Credentials
   end
 
   def self.key
-    Rails.root['test']['key']
+    AWS.root['test']['key']
   end
   def self.secret
-    Rails.root['test']['secret']
+    AWS.root['test']['secret']
   end
 end
 
