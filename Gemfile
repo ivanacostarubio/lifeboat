@@ -6,7 +6,7 @@ source "http://rubygems.org"
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 #
-gem 'right_aws', '1.10.0'
+gem 'right_aws', '>= 1.10.0'
 gem 'activerecord', '2.1.2'
 
 group :development do
