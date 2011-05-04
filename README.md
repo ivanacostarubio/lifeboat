@@ -52,18 +52,18 @@ Provide your AWS credentials in config/lifeboat.yml
 
   development:
     queue_name_prefix: your-app-development
-    access_key_id: YOURSECRETACCESSID
-    secret_access_key: YOUR-secRE/TACCe\ssKEy
+    key: YOURSECRETACCESSID
+    secret: YOUR-secRE/TACCe\ssKEy
 
   test:
     queue_name_prefix: your-app-test
-    access_key_id: YOURSECRETACCESSID
-    secret_access_key: YOUR-secRE/TACCe\ssKEy
+    key: YOURSECRETACCESSID
+    secret: YOUR-secRE/TACCe\ssKEy
 
   production:
     queue_name_prefix: your-app-production
-    access_key_id: YOURSECRETACCESSID
-    secret_access_key: YOUR-secRE/TACCe\ssKEy
+    key: YOURSECRETACCESSID
+    secret: YOUR-secRE/TACCe\ssKEy
 
 Lifeboat will then automatically create queue messages each time any instance of the model
 class is created, updated, or deleted.
