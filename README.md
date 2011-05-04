@@ -48,12 +48,25 @@ Include Lifeboat in your model class:
      include LifeBoat
     end
 
-Provide your AWS credentials in config/aws.yml
+Provide your AWS credentials in config/lifeboat.yml
 
+  development:
+    queue_name_prefix: your-app-development
     access_key_id: YOURSECRETACCESSID
     secret_access_key: YOUR-secRE/TACCe\ssKEy
 
-We will then automatically create queue messages each time any instance of the model class is created, updated, or deleted.
+  test:
+    queue_name_prefix: your-app-test
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
+
+  production:
+    queue_name_prefix: your-app-production
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
+
+Lifeboat will then automatically create queue messages each time any instance of the model
+class is created, updated, or deleted.
 
 Naming conventions for Lifeboat message queues
 ----------------------------------------------
@@ -61,16 +74,6 @@ Naming conventions for Lifeboat message queues
 Lifeboat will generate three different message queues for each model that you configure
 it for: create_MODEL, update_MODEL, and delete_MODEL.  For example, if your model is named
 Sale, then Lifeboat will generate message queues named create_sale, update_sale, and delete_sale.
-
-Assumptions
------------
-
-We assume that you have a file called aws.yml under you config directory with your aws key and secret:
-
-    test:
-      :key 'you_key'
-      :secret 'your_secret'
-
 
 Hot-Swap Slaves
 ---------------
