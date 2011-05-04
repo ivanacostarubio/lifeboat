@@ -64,11 +64,15 @@ module LifeBoat
     @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
   end
 
-  [:create, :update, :destroy ].each do |action|
-    define_method(action.to_s + "_lifeboat") do
-      q = RightAws::SqsGen2::Queue.create(@cue, action.to_s+"_"+ self.class.to_s.downcase, true)
-      q.send_message(self.attributes.to_json)
+  begin
+    [:create, :update, :destroy ].each do |action|
+      define_method(action.to_s + "_lifeboat") do
+        q = RightAws::SqsGen2::Queue.create(@cue, action.to_s+"_"+ self.class.to_s.downcase, true)
+        q.send_message(self.attributes.to_json)
+      end
     end
+  rescue RightAws::AwsError
+    puts "LifeBoat RightAws::AwsError TIMEOUT"
   end
 
 end
