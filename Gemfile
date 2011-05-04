@@ -7,7 +7,8 @@ source "http://rubygems.org"
 # Include everything needed to run rake, tests, features, etc.
 #
 gem 'right_aws', '>= 1.10.0'
-gem 'activerecord', '2.1.2'
+gem 'activerecord', '>=2.1.2'
+gem 'mysql', '2.8.1'
 
 group :development do
   gem "rspec", "2.5.0"
