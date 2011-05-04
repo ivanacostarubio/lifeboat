@@ -2,8 +2,13 @@ require 'rubygems'
 require 'right_aws'
 require 'active_record'
 require 'yaml'
+require 'fileutils'
+require 'thread'
 
 class AWS
+
+  # DUPLICATION IS RISING ON THE self.root METHOD
+  # MACHETE 
   def self.root
     if Rails.version == "2.1.2"
       YAML::load(IO.read(Rails.root + "/config/aws.yml"))
@@ -26,11 +31,15 @@ class Credentials
 # TODO: RESEARCH HOW TO REFACTOR OUT
   end
 
-  def self.key
-    AWS.root['test']['key']
-  end
-  def self.secret
-    AWS.root['test']['secret']
+  begin
+    def self.key
+      AWS.root[RAILS_ENV]['key']
+    end
+    def self.secret
+      AWS.root[RAILS_ENV]['secret']
+    end
+  rescue RightAws::AwsError
+    puts"LIFEBOAT : AWS Access Key Id needs a subscription for the service."
   end
 end
 
