@@ -67,7 +67,8 @@ module LifeBoat
   [:create, :update, :destroy ].each do |action|
     define_method(action.to_s + "_lifeboat") do
       begin
-        q = RightAws::SqsGen2::Queue.create(@cue, action.to_s+"_"+ self.class.to_s.downcase, true)
+        queue_name = action.to_s+"_"+ self.class.to_s.downcase + "_" + RAILS_ENV
+        q = RightAws::SqsGen2::Queue.create(@cue, queue_name, true)
         q.send_message(self.attributes.to_json)
       rescue RightAws::AwsError => e
         puts "LifeBoat RightAws::AwsError TIMEOUT"
