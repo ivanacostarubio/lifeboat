@@ -10,6 +10,8 @@ ActiveRecord::Base.logger =
 ActiveRecord::Base.establish_connection(config['test'])
 
 def rebuild_model options = {}
+ #   ActiveRecord::Base.connection.create_database('lifeboat_test')
+
   ActiveRecord::Base.connection.create_table :fake_models, :force => true do |table|
     table.column :name, :string
     table.column :phone, :string
@@ -32,6 +34,7 @@ class Fake < ActiveRecord::Base
   include LifeBoat
 end
 
+RAILS_ENV = "test"
 
 class Helper
     def self.clean_all_queues
@@ -44,7 +47,11 @@ end
 
 class Rails
   def self.root
-    ''
+    Dir.pwd
+  end
+
+  def self.version
+    '2.1.2'
   end
 end
 
@@ -93,27 +100,27 @@ describe LifeBoat  do
 
   it "reads messages from a cue" do
     Fake.create(:name => "ivan")
-    messages = LifeBoat.read_queue("create_fake")
+    messages = LifeBoat.read_queue("create_fake_test")
     messages.size.should == 1
   end
 
   it "the message it creates contains the attributes ob the object as json" do
     f = Fake.create(:name => "ivan")
-    q = LifeBoat.read_queue("create_fake")
+    q = LifeBoat.read_queue("create_fake_test")
     q[0].body.should == f.attributes.to_json
   end
 
   it "deletes SQS queue when parent is deleted" do
     f = Fake.create(:name => "updated")
     f.destroy
-    messages = LifeBoat.read_queue("destroy_fake")
+    messages = LifeBoat.read_queue("destroy_fake_test")
     messages.size.should == 1
   end
 
   it "updates SQS queue when parent is updated" do
     f = Fake.create(:name => "Er Update")
     f.name= "28347834" ; f.save
-    messages= LifeBoat.read_queue("update_fake")
+    messages= LifeBoat.read_queue("update_fake_test")
     messages.size.should == 1
   end
 
