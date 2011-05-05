@@ -50,15 +50,20 @@ Include Lifeboat in your model class:
 
 Provide your AWS credentials in config/lifeboat.yml
 
-  development:
-    queue_name_prefix: your-app-development
-    key: YOURSECRETACCESSID
-    secret: YOUR-secRE/TACCe\ssKEy
+test:
+  key: YOURSECRETACCESSID
+  secret: YOUR-secRE/TACCe\ssKEy
+  queue_name_prefix: your-app-development
 
-  test:
-    queue_name_prefix: your-app-test
-    key: YOURSECRETACCESSID
-    secret: YOUR-secRE/TACCe\ssKEy
+development:
+  key: YOURSECRETACCESSID
+  secret: YOUR-secRE/TACCe\ssKEy
+  queue_name_prefix: your-app-development
+
+production:
+  key: YOURSECRETACCESSID
+  secret: YOUR-secRE/TACCe\ssKEy
+  queue_name_prefix: your-app-development
 
   production:
     queue_name_prefix: your-app-production
