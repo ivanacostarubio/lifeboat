@@ -50,9 +50,18 @@ Include Lifeboat in your model class:
 
 Provide your AWS credentials in config/aws.yml
 
-    access_key_id: YOURSECRETACCESSID
-    secret_access_key: YOUR-secRE/TACCe\ssKEy
 
+test:
+  key: ......
+  secret: .......
+
+development:
+  key: ........
+  secret: .......
+
+production:
+  key: .......
+  secret: ......
 
 ** We will then automatically create queue messages each time any instance of the model class is created, updated, or deleted. ** 
 
