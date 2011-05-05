@@ -44,31 +44,23 @@ Quick Start
 
 Include Lifeboat in your model class:
 
-    class AnyObject < ActiveRecord::Base
-     include LifeBoat
-    end
+  class AnyObject < ActiveRecord::Base
+    include LifeBoat
+  end
 
-Provide your AWS credentials in config/lifeboat.yml
+Provide your AWS credentials in config/aws.yml
 
-test:
-  key: YOURSECRETACCESSID
-  secret: YOUR-secRE/TACCe\ssKEy
-  queue_name_prefix: your-app-development
+  test:
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
 
-development:
-  key: YOURSECRETACCESSID
-  secret: YOUR-secRE/TACCe\ssKEy
-  queue_name_prefix: your-app-development
-
-production:
-  key: YOURSECRETACCESSID
-  secret: YOUR-secRE/TACCe\ssKEy
-  queue_name_prefix: your-app-development
+  development:
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
 
   production:
-    queue_name_prefix: your-app-production
-    key: YOURSECRETACCESSID
-    secret: YOUR-secRE/TACCe\ssKEy
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
 
 Lifeboat will then automatically create queue messages each time any instance of the model
 class is created, updated, or deleted.
