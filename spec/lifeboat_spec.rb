@@ -26,12 +26,14 @@ rebuild_model
 
 class FakeModel < ActiveRecord::Base
   attr_accessor :name, :email, :phone
-  include LifeBoat
+  #include LifeBoat
+  has_lifeboat
 end
 
 class Fake < ActiveRecord::Base
   attr_accessor :name
-  include LifeBoat
+#  include LifeBoat
+  has_lifeboat
 end
 
 RAILS_ENV = "test"
@@ -57,7 +59,7 @@ end
 
 describe "An simple object " do
   it "raises for not having callbacks" do
-    lambda{ class BadModel ; include LifeBoat ; end }.should raise_error
+    lambda{ class BadModel ; has_lifeboat ; end }.should raise_error
   end
 end
 
@@ -123,5 +125,12 @@ describe LifeBoat  do
     messages= LifeBoat.read_queue("update_fake_test")
     messages.size.should == 1
   end
+end
 
+describe LifeBoat, " does XML" do 
+  it "serialices the objects to xml" do 
+    f = XMLRecord.create(:name => "Yo soy XML")
+    messages = LifeBoat.read_queue("create_fake_test")
+    messages[0].body.should == f.attributes.to_xml
+  end
 end
