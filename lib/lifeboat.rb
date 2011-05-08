@@ -6,7 +6,6 @@ require 'fileutils'
 require 'thread'
 
 class AWS
-
   # DUPLICATION IS RISING ON THE self.root METHOD
   # MACHETE 
   def self.root
@@ -20,7 +19,6 @@ class AWS
     end
   end
 end
-
 
 
 class Credentials
@@ -45,14 +43,6 @@ end
 
 
 module LifeBoat
-  def self.included(base)
-    raise "Object Lacks Proper Callbacks" unless base.respond_to? :after_create
-    base.class_eval do
-      after_create :create_lifeboat
-      after_destroy :destroy_lifeboat
-      after_update :update_lifeboat
-    end
-  end
 
   def self.read_queue(name)
     #TODO EXTRAT OUT THE @CUE INTO HIGHER LEVEL
@@ -60,20 +50,41 @@ module LifeBoat
     return @cue.queue(name).receive_messages
   end
 
-  def after_initialize
-    @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
+  module ActiveRecord
+    def has_lifeboat(options={})
+      include LifeBoat::Queues
+
+      if options[:format] == :xml
+        format = :to_xml
+      else
+        format = :to_json
+      end
+
+      [:create, :update, :destroy ].each do |action|
+        define_method(action.to_s + "_lifeboat") do
+          begin
+            @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
+            queue_name = action.to_s+"_"+ self.class.to_s.downcase + "_" + RAILS_ENV
+            q = RightAws::SqsGen2::Queue.create(@cue, queue_name, true, 1000)
+            q.send_message(self.attributes.send format)
+          rescue RightAws::AwsError => error
+            puts error
+          end
+        end
+      end
+    end
   end
 
-  [:create, :update, :destroy ].each do |action|
-    define_method(action.to_s + "_lifeboat") do
-      begin
-        queue_name = action.to_s+"_"+ self.class.to_s.downcase + "_" + RAILS_ENV
-        q = RightAws::SqsGen2::Queue.create(@cue, queue_name, true)
-        q.send_message(self.attributes.to_json)
-      rescue RightAws::AwsError => e
-        puts "LifeBoat RightAws::AwsError TIMEOUT"
-        puts e
+  module Queues
+    def self.included(base)
+      raise "Object Lacks Proper Callbacks" unless base.respond_to? :after_create
+      base.class_eval do
+        after_create :create_lifeboat
+        after_destroy :destroy_lifeboat
+        after_update :update_lifeboat
       end
     end
   end
 end
+
+ActiveRecord::Base.extend LifeBoat::ActiveRecord
