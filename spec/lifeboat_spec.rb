@@ -11,7 +11,6 @@ ActiveRecord::Base.establish_connection(config['test'])
 
 def rebuild_model options = {}
  #   ActiveRecord::Base.connection.create_database('lifeboat_test')
-
   ActiveRecord::Base.connection.create_table :fake_models, :force => true do |table|
     table.column :name, :string
     table.column :phone, :string
@@ -20,20 +19,27 @@ def rebuild_model options = {}
   ActiveRecord::Base.connection.create_table :fakes, :force => true do |table|
     table.column :name, :string
   end
+  ActiveRecord::Base.connection.create_table :xml_records, :force => true do |table|
+    table.column :name, :string
+  end
+
 end
 
 rebuild_model
 
 class FakeModel < ActiveRecord::Base
   attr_accessor :name, :email, :phone
-  #include LifeBoat
   has_lifeboat
 end
 
 class Fake < ActiveRecord::Base
   attr_accessor :name
-#  include LifeBoat
   has_lifeboat
+end
+
+class XMLRecord < ActiveRecord::Base
+  attr_accessor :name
+  has_lifeboat :format => :xml
 end
 
 RAILS_ENV = "test"
@@ -112,7 +118,7 @@ describe LifeBoat  do
     q[0].body.should == f.attributes.to_json
   end
 
-  it "deletes SQS queue when parent is deleted" do
+  it "creates a destroy SQS queue when parent is destroyed" do
     f = Fake.create(:name => "updated")
     f.destroy
     messages = LifeBoat.read_queue("destroy_fake_test")
@@ -130,7 +136,8 @@ end
 describe LifeBoat, " does XML" do 
   it "serialices the objects to xml" do 
     f = XMLRecord.create(:name => "Yo soy XML")
-    messages = LifeBoat.read_queue("create_fake_test")
+    messages = LifeBoat.read_queue("create_xmlrecord_test")
+    messages.size.should == 1
     messages[0].body.should == f.attributes.to_xml
   end
 end

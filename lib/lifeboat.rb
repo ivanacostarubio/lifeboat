@@ -6,7 +6,6 @@ require 'fileutils'
 require 'thread'
 
 class AWS
-
   # DUPLICATION IS RISING ON THE self.root METHOD
   # MACHETE 
   def self.root
@@ -52,11 +51,29 @@ module LifeBoat
   end
 
   module ActiveRecord
-    def has_lifeboat
-      include Queues
+    def has_lifeboat(options={})
+      include LifeBoat::Queues
+
+      if options[:format] == :xml
+        format = :to_xml
+      else
+        format = :to_json
+      end
+
+      [:create, :update, :destroy ].each do |action|
+        define_method(action.to_s + "_lifeboat") do
+          begin
+            @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
+            queue_name = action.to_s+"_"+ self.class.to_s.downcase + "_" + RAILS_ENV
+            q = RightAws::SqsGen2::Queue.create(@cue, queue_name, true, 1000)
+            q.send_message(self.attributes.send format)
+          rescue RightAws::AwsError => error
+            puts error
+          end
+        end
+      end
     end
   end
-
 
   module Queues
     def self.included(base)
@@ -65,23 +82,6 @@ module LifeBoat
         after_create :create_lifeboat
         after_destroy :destroy_lifeboat
         after_update :update_lifeboat
-      end
-    end
-
-    def after_initialize
-      @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
-    end
-
-    [:create, :update, :destroy ].each do |action|
-      define_method(action.to_s + "_lifeboat") do
-        begin
-          queue_name = action.to_s+"_"+ self.class.to_s.downcase + "_" + RAILS_ENV
-          q = RightAws::SqsGen2::Queue.create(@cue, queue_name, true)
-          q.send_message(self.attributes.to_json)
-        rescue RightAws::AwsError => e
-          puts "LifeBoat RightAws::AwsError TIMEOUT"
-          puts e
-        end
       end
     end
   end
