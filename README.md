@@ -45,7 +45,14 @@ Quick Start
 Include Lifeboat in your model class:
 
     class AnyObject < ActiveRecord::Base
-     include LifeBoat
+      has_lifeboat
+    end
+
+This will serialize your active record object to json and send it to the
+queue automatically. Moreover, we do XML too. 
+
+    class XMLObject < ActiveRecord::Base
+      has_lifeboat :format => :xml
     end
 
 Provide your AWS credentials in config/aws.yml
