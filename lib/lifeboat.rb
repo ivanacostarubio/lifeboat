@@ -23,10 +23,10 @@ class Credentials
 
   begin
     def self.key
-      AWS.root[RAILS_ENV]['key']
+      AWS.root[RAILS_ENV]['access_key_id']
     end
     def self.secret
-      AWS.root[RAILS_ENV]['secret']
+      AWS.root[RAILS_ENV]['secret_access_key']
     end
   rescue RightAws::AwsError
     puts"LIFEBOAT : AWS Access Key Id needs a subscription for the service."
