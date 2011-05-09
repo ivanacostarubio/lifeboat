@@ -6,17 +6,9 @@ require 'fileutils'
 require 'thread'
 
 class AWS
-  # DUPLICATION IS RISING ON THE self.root METHOD
-  # MACHETE 
   def self.root
-    if Rails.version == "2.1.2"
-      YAML::load(IO.read(Rails.root + "/config/aws.yml"))
-    elsif Rails.version == "2.3.8"
-      YAML::load(IO.read(Rails.root + "config/aws.yml"))
-    else
-      raise "Email ivan@bakedweb.net with this error"
-      YAML::load(IO.read(File.dirname(__FILE__) + '/../config/aws.yml'))
-    end
+    rails_root = (Rails.version < "2.1.2") ? RAILS_ROOT : Rails.root
+    YAML::load(IO.read(File.join(rails_root, 'config', 'aws.yml')))
   end
 end
 
