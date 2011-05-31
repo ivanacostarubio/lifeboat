@@ -55,20 +55,6 @@ queue automatically. Moreover, we do XML too.
       has_lifeboat :format => :xml
     end
 
-Provide your AWS credentials in config/aws.yml
-
-
-test:
-  key: ......
-  secret: .......
-
-development:
-  key: ........
-  secret: .......
-
-production:
-  key: .......
-  secret: ......
 
 ** We will then automatically create queue messages each time any instance of the model class is created, updated, or deleted. ** 
 
@@ -80,15 +66,6 @@ How did we named the queues
 ** Where: **  action can be: create, update and delete
 ** Where: ** model can be the name of any model we include lifeboat on. 
 
-
-ASSUMPTIONS
------------
-
-We Asume you have a file called aws.yml under you config directory with the aws key and secret
-
-    test:
-      :key 'you_key'
-      :secret 'your_secret'
 
 
 Hot-Swap Slaves
