@@ -46,6 +46,9 @@ module LifeBoat
     def has_lifeboat(options={})
       include LifeBoat::Queues
 
+      return unless (RAILS_ENV == "production") or (RAILS_ENV == "testing")
+
+
       if options[:format] == :xml
         format = :to_xml
       else
