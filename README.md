@@ -48,7 +48,8 @@ Include Lifeboat in your model class:
     include LifeBoat
   end
 
-Provide your AWS credentials in config/aws.yml
+This will serialize your active record object to json and send it to the
+queue automatically. Moreover, we do XML too. 
 
   test:
     access_key_id: YOURSECRETACCESSID
