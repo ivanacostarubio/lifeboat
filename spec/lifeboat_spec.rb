@@ -1,5 +1,8 @@
 require 'rubygems'
 require 'rspec'
+
+RAILS_ENV = "testing"
+
 require 'lifeboat'
 
 config = YAML::load(IO.read(File.dirname(__FILE__) + '/../config/database.yml'))
@@ -11,7 +14,6 @@ ActiveRecord::Base.establish_connection(config['test'])
 
 def rebuild_model options = {}
  #   ActiveRecord::Base.connection.create_database('lifeboat_test')
-
   ActiveRecord::Base.connection.create_table :fake_models, :force => true do |table|
     table.column :name, :string
     table.column :phone, :string
@@ -20,21 +22,29 @@ def rebuild_model options = {}
   ActiveRecord::Base.connection.create_table :fakes, :force => true do |table|
     table.column :name, :string
   end
+  ActiveRecord::Base.connection.create_table :xml_records, :force => true do |table|
+    table.column :name, :string
+  end
+
 end
 
 rebuild_model
 
 class FakeModel < ActiveRecord::Base
   attr_accessor :name, :email, :phone
-  include LifeBoat
+  has_lifeboat
 end
 
 class Fake < ActiveRecord::Base
   attr_accessor :name
-  include LifeBoat
+  has_lifeboat
 end
 
-RAILS_ENV = "test"
+class XMLRecord < ActiveRecord::Base
+  attr_accessor :name
+  has_lifeboat :format => :xml
+end
+
 
 class Helper
     def self.clean_all_queues
@@ -57,7 +67,7 @@ end
 
 describe "An simple object " do
   it "raises for not having callbacks" do
-    lambda{ class BadModel ; include LifeBoat ; end }.should raise_error
+    lambda{ class BadModel ; has_lifeboat ; end }.should raise_error
   end
 end
 
@@ -100,28 +110,36 @@ describe LifeBoat  do
 
   it "reads messages from a cue" do
     Fake.create(:name => "ivan")
-    messages = LifeBoat.read_queue("create_fake_test")
+    messages = LifeBoat.read_queue("create_fake_testing")
     messages.size.should == 1
   end
 
   it "the message it creates contains the attributes ob the object as json" do
     f = Fake.create(:name => "ivan")
-    q = LifeBoat.read_queue("create_fake_test")
+    q = LifeBoat.read_queue("create_fake_testing")
     q[0].body.should == f.attributes.to_json
   end
 
-  it "deletes SQS queue when parent is deleted" do
+  it "creates a destroy SQS queue when parent is destroyed" do
     f = Fake.create(:name => "updated")
     f.destroy
-    messages = LifeBoat.read_queue("destroy_fake_test")
+    messages = LifeBoat.read_queue("destroy_fake_testing")
     messages.size.should == 1
   end
 
   it "updates SQS queue when parent is updated" do
     f = Fake.create(:name => "Er Update")
     f.name= "28347834" ; f.save
-    messages= LifeBoat.read_queue("update_fake_test")
+    messages= LifeBoat.read_queue("update_fake_testing")
     messages.size.should == 1
   end
+end
 
+describe LifeBoat, " does XML" do 
+  it "serialices the objects to xml" do 
+    f = XMLRecord.create(:name => "Yo soy XML")
+    messages = LifeBoat.read_queue("create_xmlrecord_testing")
+    messages.size.should == 1
+    messages[0].body.should == f.attributes.to_xml
+  end
 end
