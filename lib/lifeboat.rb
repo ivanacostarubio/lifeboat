@@ -15,10 +15,10 @@ end
 
 class Credentials
   def initialize
-# TRIED USING THE INITIALIZE FOR THOSE YAML LOADING DOWN THERE
-# BUT IT WAS GIVING ME CRAP AND HAD TO DUPLICATE THE LINE
-# MY GUEST IS THAT IT IS B/C THEY ARE CLASS METHODS
-# TODO: RESEARCH HOW TO REFACTOR OUT
+    # TRIED USING THE INITIALIZE FOR THOSE YAML LOADING DOWN THERE
+    # BUT IT WAS GIVING ME CRAP AND HAD TO DUPLICATE THE LINE
+    # MY GUEST IS THAT IT IS B/C THEY ARE CLASS METHODS
+    # TODO: RESEARCH HOW TO REFACTOR OUT
   end
 
   begin
@@ -34,6 +34,17 @@ class Credentials
 end
 
 
+class RescateLifeBoat
+
+  @queue = :lifeboats
+
+  def self.perform(action, klass, id)
+    record = klass.camelize.constantize.find(id)
+    record.send(action)
+  end
+end
+
+
 module LifeBoat
 
   def self.read_queue(name)
@@ -42,11 +53,38 @@ module LifeBoat
     return @cue.queue(name).receive_messages
   end
 
+  module ResqueCallbacks
+    def create_resque_lifeboat
+     if RAILS_ENV == "testing"
+       self.create_lifeboat
+     else
+       Resque.enqueue(RescateLifeBoat, :create_lifeboat ,self.class.name, self.id)
+     end
+    end
+
+    def destroy_resque_lifeboat
+      if RAILS_ENV == "testing"
+        self.destroy_lifeboat
+      else
+        Resque.enqueue(RescateLifeBoat, :destroy_lifeboat, self.class.name, self.id)
+      end
+    end
+
+    def update_resque_lifeboat
+      if RAILS_ENV == "testing"
+        self.update_lifeboat
+      else
+        Resque.enqueue(RescateLifeBoat, :update_lifeboat ,self.class.name, self.id)
+      end
+    end
+  end
+
+
   module ActiveRecord
+
+    
     def has_lifeboat(options={})
       include LifeBoat::Queues
-
-
 
       if options[:format] == :xml
         format = :to_xml
@@ -74,9 +112,9 @@ module LifeBoat
     def self.included(base)
       raise "Object Lacks Proper Callbacks" unless base.respond_to? :after_create
       base.class_eval do
-        after_create :create_lifeboat
-        after_destroy :destroy_lifeboat
-        after_update :update_lifeboat
+        after_create :create_resque_lifeboat
+        after_destroy :destroy_resque_lifeboat
+        after_update :update_resque_lifeboat
       end
     end
   end
