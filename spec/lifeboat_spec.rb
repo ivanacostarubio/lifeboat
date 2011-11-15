@@ -31,16 +31,19 @@ end
 rebuild_model
 
 class FakeModel < ActiveRecord::Base
+  include LifeBoat::ResqueCallbacks
   attr_accessor :name, :email, :phone
   has_lifeboat
 end
 
 class Fake < ActiveRecord::Base
+  include LifeBoat::ResqueCallbacks
   attr_accessor :name
   has_lifeboat
 end
 
 class XMLRecord < ActiveRecord::Base
+  include LifeBoat::ResqueCallbacks
   attr_accessor :name
   has_lifeboat :format => :xml
 end
