@@ -44,29 +44,34 @@ Quick Start
 
 Include Lifeboat in your model class:
 
-    class AnyObject < ActiveRecord::Base
-      has_lifeboat
-    end
+  class AnyObject < ActiveRecord::Base
+    include LifeBoat
+  end
 
 This will serialize your active record object to json and send it to the
 queue automatically. Moreover, we do XML too. 
 
-    class XMLObject < ActiveRecord::Base
-      has_lifeboat :format => :xml
-    end
+  test:
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
 
+  development:
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
 
-** We will then automatically create queue messages each time any instance of the model class is created, updated, or deleted. ** 
+  production:
+    access_key_id: YOURSECRETACCESSID
+    secret_access_key: YOUR-secRE/TACCe\ssKEy
 
-How did we named the queues
----------------------------
+Lifeboat will then automatically create queue messages each time any instance of the model
+class is created, updated, or deleted.
 
-** action_model **
+Naming conventions for Lifeboat message queues
+----------------------------------------------
 
-** Where: **  action can be: create, update and delete
-** Where: ** model can be the name of any model we include lifeboat on. 
-
-
+Lifeboat will generate three different message queues for each model that you configure
+it for: create_MODEL, update_MODEL, and delete_MODEL.  For example, if your model is named
+Sale, then Lifeboat will generate message queues named create_sale, update_sale, and delete_sale.
 
 Hot-Swap Slaves
 ---------------
@@ -106,4 +111,4 @@ Buit by Ivan.
 
 Designed by Ivan & Ryan.
 
-Inspired by Amazon.  (And not in a good way.)
+Inspired by Amazon.  ([And not in a good way.](http://www.businessinsider.com/amazon-lost-data-2011-4))
