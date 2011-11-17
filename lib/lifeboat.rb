@@ -71,7 +71,12 @@ module LifeBoat
       if RAILS_ENV == "testing"
         self.destroy_lifeboat
       else
-        Resque.enqueue(RescateLifeBoat, :destroy_lifeboat, self.class.name, self.id)
+        begin
+          Resque.enqueue(RescateLifeBoat, :destroy_lifeboat, self.class.name, self.id)
+        rescue => e
+         puts "Captain! There was a problem sending the Lifeboats"
+         puts e
+        end
       end
     end
 
@@ -79,7 +84,12 @@ module LifeBoat
       if RAILS_ENV == "testing"
         self.update_lifeboat
       else
-        Resque.enqueue(RescateLifeBoat, :update_lifeboat ,self.class.name, self.id)
+        begin
+          Resque.enqueue(RescateLifeBoat, :update_lifeboat ,self.class.name, self.id)
+        rescue => e
+          puts "Captain! There was a problem sending the Lifeboats"
+          puts e
+        end
       end
     end
   end
