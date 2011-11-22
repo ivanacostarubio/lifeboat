@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'rspec'
 
-RAILS_ENV = "testing"
+RAILS_ENV = "test"
 
 require 'lifeboat'
 
