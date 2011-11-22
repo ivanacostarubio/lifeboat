@@ -55,7 +55,7 @@ module LifeBoat
 
   module ResqueCallbacks
     def create_resque_lifeboat
-     if Rails.env.test?
+     if RAILS_ENV == 'test'
        self.create_lifeboat
      else
        begin
@@ -68,7 +68,7 @@ module LifeBoat
     end
 
     def destroy_resque_lifeboat
-      if Rails.env.test?
+      if RAILS_ENV == 'test'
         self.destroy_lifeboat
       else
         begin
@@ -81,7 +81,7 @@ module LifeBoat
     end
 
     def update_resque_lifeboat
-      if Rails.env.test?
+      if RAILS_ENV == 'test'
         self.update_lifeboat
       else
         begin
@@ -110,7 +110,7 @@ module LifeBoat
       [:create, :update, :destroy ].each do |action|
         define_method(action.to_s + "_lifeboat") do
           begin
-            return unless (Rails.env.production?) or (Rails.env.testing?)
+            return unless (RAILS_ENV == 'production') or (RAILS_ENV == 'test')
             @cue = RightAws::SqsGen2.new(Credentials.key, Credentials.secret)
             queue_name = action.to_s+"_"+ self.class.to_s.downcase + "_" + RAILS_ENV
             q = RightAws::SqsGen2::Queue.create(@cue, queue_name, true, 1000)
