@@ -47,3 +47,4 @@ pkg
 spec/debug.log
 support/aws.yml
 *.swn
+config/aws.yml
